@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/portainer:latest
+    container_name: portainer
+    restart: unless-stopped   
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - traefik
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - {{ docker.docker_volumens_dir }}/portainer/data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{ domain.domain_name | regex_replace('\.', '-') }}.entrypoints=https"
+      - "traefik.http.routers.{{ domain.domain_name | regex_replace('\.', '-') }}.rule=Host(`{{ domain.domain_name }}`)"
+      - "traefik.http.routers.{{ domain.domain_name | regex_replace('\.', '-') }}.tls=true"
+      - "traefik.http.routers.{{ domain.domain_name | regex_replace('\.', '-') }}.service={{ domain.domain_name | regex_replace('\.', '-') }}"
+      - "traefik.http.services.{{ domain.domain_name | regex_replace('\.', '-') }}.loadbalancer.server.port=9000"
+
+networks:
+  traefik:
+    external:
+      name: traefik

@@ -1,0 +1,21 @@
+- name: Get Endpoints
+  uri:
+    url: "{{ domain.url }}/api/endpoints"
+    method: GET
+    return_content: true
+    validate_certs: no
+    headers:
+      Authorization: "Bearer {{ token }}"
+  register: get_portainer_endpoints
+
+- name: Create list endpoints
+  set_fact:
+    portainer_endpoints: "{{ get_portainer_endpoints.json | map(attribute='Name') | list  }}"
+  when: get_portainer_endpoints.json is defined
+
+- name: Create endpoints
+  shell: 'curl -k -X POST "{{ domain.url }}/api/endpoints" -H  "accept: application/json" -H  "Content-Type: multipart/form-data" -F "Name={{ endpoint.Name }}" -F "EndpointType={{ endpoint.EndpointType }}" -F "URL={{ endpoint.URL }}" -F "PublicURL={{ endpoint.PublicURL }}" -H "Authorization: Bearer {{ token }}"'
+  loop: "{{ configuration.endpoints }}"
+  loop_control:
+    loop_var: endpoint
+  when: endpoint.Name not in portainer_endpoints

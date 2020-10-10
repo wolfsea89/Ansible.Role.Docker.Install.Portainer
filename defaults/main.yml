@@ -1,0 +1,7 @@
+---
+docker:
+  docker_compose_dir: /opt/docker_compose
+  docker_volumens_dir: /opt/containers
+
+install_container:       true
+configuration_container: false

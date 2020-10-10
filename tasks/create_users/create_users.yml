@@ -1,0 +1,56 @@
+- name: "Init admin '{{ user.username }}'"
+  uri:
+    url: "{{ domain.url }}/api/users/admin/init"
+    method: POST
+    return_content: true
+    follow_redirects: all
+    validate_certs: no
+    body_format: json
+    body: '{ "Username":"{{ user.username }}", "Password":"{{ user.default_password }}" }'
+    status_code: 200,409
+  register: admin_init
+  when:
+    - token is undefined
+    - user.state == "present"
+    - "'portainer' in user_in_docker.docker_services"
+  delegate_to: localhost
+
+# Generate authentication token
+- name: Generate authentication token
+  uri:
+    url: "{{ domain.url }}/api/auth"
+    method: POST
+    return_content: true
+    validate_certs: no
+    body_format: json
+    body: '{ "Username":"{{ user.username }}", "Password":"{{ user.default_password }}"}'
+  register: auth_token
+  when:
+    - token is undefined
+    - user.state == "present"
+    - "'portainer' in user_in_docker.docker_services"
+
+- name: Set token
+  set_fact:
+    token: "{{ auth_token.json.jwt }}"
+  when:
+    - auth_token is defined
+    - token is undefined
+
+- name: "Create admin '{{ user.username }}'"
+  uri:
+    url: "{{ domain.url }}/api/users"
+    method: POST
+    return_content: true
+    follow_redirects: all
+    validate_certs: no
+    body_format: json
+    body: '{ "Username":"{{ user.username }}", "Password":"{{ user.default_password }}", "Role": 1 }'
+    status_code: 200,409
+    headers:
+      Authorization: "Bearer {{ token }}"
+  register: admin_init2
+  when:
+    - user.state == "present"
+    - "'portainer' in user_in_docker.docker_services"
+  delegate_to: localhost
