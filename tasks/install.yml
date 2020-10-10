@@ -1,0 +1,45 @@
+---
+# Create directories
+- name: Create directories for portainer
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ docker.docker_compose_dir }}/portainer"
+    - "{{ docker.docker_volumens_dir }}/portainer"
+    - "{{ docker.docker_volumens_dir }}/portainer/data"
+
+- name: Clear the directory before uploading the backup
+  file:
+    path: "{{ docker.docker_volumens_dir }}/portainer/data"
+    state: absent
+  when: 
+    - configuration.portainter_backup_data_dir is defined
+    - configuration.restore_from_backup
+
+- name: Copy portainer from backup
+  copy:
+    src: "{{ configuration.portainter_backup_data_dir }}/"
+    dest: "{{ docker.docker_volumens_dir }}/portainer/data"
+    remote_src: yes
+    force: yes
+  when: 
+    - configuration.portainter_backup_data_dir is defined
+    - configuration.restore_from_backup
+
+# Create configurations
+- name: Create docker-compose configuration
+  template:
+    src: "docker-compose.yml.j2"
+    dest: "{{ docker.docker_compose_dir }}/portainer/docker-compose.yml"
+    mode: "0600"
+
+- name: Stop container
+  docker_container:
+    name: portainer
+    state: absent
+
+- name: Start the container
+  docker_compose:
+    project_src: "{{ docker.docker_compose_dir }}/portainer"
+  register: portainer_compose_start

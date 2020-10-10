@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  remote_user: root
+  roles:
+    - role: Ansible.Role.Docker.Install.Portainer
+      tags: [portainer, docker, install]
+      vars:
+        docker:
+          docker_compose_dir:  /Data/containers
+          docker_volumens_dir: /Data/containers 
+        # configuration:     <- tests/inventory
+        # domains:           <- tests/inventory
+        # user_in_docker:    <- tests/inventory
+        users: # Recommendation: Defining in group_varss/all
+          - name: Administrator
+            username: administrator
+            default_password: "aaa"
+            state: present
+        install_container: true
+        configuration_container: true
+      when:
+        - "'portainer' in system.docker_services"

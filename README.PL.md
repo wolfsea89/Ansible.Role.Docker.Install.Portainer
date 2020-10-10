@@ -1,60 +1,60 @@
 Ansible.Role.Docker.Install.Portainer
 =========
 
-The role that installs and configures portainer.
+Rola instalująca i konfigurująca portainer.
 
-Language: [EN](README.md), [PL](README.PL.md)
+Język: [EN](README.md), [PL](README.PL.md)
 
 
-Role Variables
+Zmienne w roli
 --------------
 requires:
 ```
-  docker:                   # Docker configuration
-  configuration:            # Traefik configuration
-  domain:                   # Domain configuration
-  users:                    # List of all users declared in inventory - Preferred place group_vars / all
-  users_in_docker:          # List of users to be declared on the docker services
-  install_container:        # Do you want to install a container? << true | false >>
-  configuration_container:  # Do you want configurure service (CaaC) << true | false >>
+  docker:                   # Potrzebna konfiguracja dockera
+  configuration:            # Konfiguracja traefika
+  domain:                   # Konfiguracja domeny
+  users:                    # Lista wszystkich użytkowników zdeklarowanych w inventory - Preferowane miejsce group_vars/all
+  users_in_docker:          # Lista użytkowników do zdeklarowanych na serwisach docker`owych
+  install_container:        # Czy instalować od nowa kontener?        << true | false >>
+  configuration_container:  # Czy konfigurować konter za pomocą CaaC? << true | false >>
 ```
 
-example `docker`recommended in `group_vars`
+przykład `docker` zalecane w `group_vars`
 ```
 docker:
   docker_compose_dir: /Data/containers
   docker_volumens_dir: /Data/containers
 ```
-example `configuration` recommended in `group_vars`
+example `configuration` zalecane w `group_vars`
 
 [egxample](roles/Ansible.Role.Docker.Install.Portainer/tests/inventory)
 
-example `sites` recommended in `host_vars`
+example `domain` zalecane w `host_vars`
 ```
   portainer:
     domain_name: portainer.rachuna.pl
     url: "https://portainer.rachuna.pl"
 ```
-example `users_in_docker` recommended in `host_vars`
+example `users_in_docker` zalecane w `host_vars`
 ```
   users_in_docker:
     - name: administrator
       docker_services:
         - portainer
 ```
-example `users` recommended in `group_vars/all`
+example `users` zalecane w `group_vars/all`
 ```
  users:
-    - name: Administrator 
+    - name: Administrator
       username: administrator
       default_password: "aaa"
       state: present
 ```
 
-Example Playbook
+Przykładowy Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Przykładowy playbbok
 ```
 - name: Install all containers
   hosts: localhost
@@ -82,7 +82,7 @@ Including an example of how to use your role (for instance, with variables passe
         - "'portainer' in system.docker_services"
 ```
 
-Testing
+Testowanie
 ------------
 
 Testing on:
@@ -92,12 +92,12 @@ Testing on:
   - Centos 7
   - Centos 8
 
-License
+Licencja
 -------
 
 BSD
 
-Author Information
+Autor
 ------------------
  **Maciej Rachuna**
 ##### System Administrator & DevOps Engineer

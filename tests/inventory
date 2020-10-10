@@ -1,0 +1,72 @@
+localhost:
+  vars:
+    domains:
+      portainer:
+        domain_name: portainer.rachuna.pl
+        url: "https://portainer.rachuna.pl"
+    configuration:
+      portainter_backup_data_dir: /Data/containers/portainer/data2
+      restore_from_backup: true
+      wait_for_start_container: 1
+
+      # CaaC
+      configratuon_as_a_code: false
+      endpoints:
+        - Name: "mr-reactor-002.rachuna.pl"
+          PublicURL: "mr-reactor-002.rachuna.pl"
+          URL: "tcp://mr-reactor-002.rachuna.pl:2375"
+          GroupID: 1
+          EndpointType: 1  # Docker API
+          TLS: "false"
+          TagIds: []
+          TLSSkipVerify: "false"
+          TLSSkipClientVerify: "false"
+          TLSCACertFile: "null"
+          TLSCertFile: "null"
+          TLSKeyFile: "null"
+      settings:
+        LogoURL: ""
+        BlackListedLabels: []
+        AuthenticationMethod: 2 # 1: local, 2: LDAP, 3: OAuth (extension)
+        LDAPSettings: 
+          AnonymousMode: false
+          ReaderDN: cn=admin,dc=rachuna,dc=pl  # Relation to LDAP
+          URL: mr-reactor-002.rachuna.pl:389
+          TLSConfig:
+            TLS: false
+            TLSSkipVerify: true
+          StartTLS: false
+          SearchSettings:
+            - BaseDN: "ou=users,dc=rachuna,dc=pl"
+              Filter: "(&(objectClass=*)(memberOf=cn=admin_portainer,ou=groups,dc=rachuna,dc=pl))"
+              UserNameAttribute: uid
+          GroupSearchSettings:
+            - GroupBaseDN: "ou=groups,dc=rachuna,dc=pl"
+              GroupFilter: ""
+              GroupAttribute: member
+          AutoCreateUsers: true
+          Password: "aaaa" # Relation to LDAP
+        OAuthSettings:
+          ClientID: ""
+          AccessTokenURI: ""
+          ResourceURI: ""
+          RedirectURI: ""
+          UserIdentifier: ""
+          Scopes: ""
+          OAuthAutoCreateUsers: false
+          DefaultTeamID: 0
+        AllowBindMountsForRegularUsers: true
+        AllowPrivilegedModeForRegularUsers: true
+        AllowVolumeBrowserForRegularUsers: false
+        SnapshotInterval: 5m
+        TemplatesURL: ""
+        EnableHostManagementFeatures: false
+        EdgeAgentCheckinInterval: 5
+        EnableEdgeComputeFeatures: false
+        AllowStackManagementForRegularUsers: true
+        AllowHostNamespaceForRegularUsers: true
+        AllowDeviceMappingForRegularUsers: true
+    user_in_docker:
+      - name: administrator
+        docker_services:
+          - portainer

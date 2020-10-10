@@ -1,0 +1,17 @@
+# Create Admin
+- name: Create Admin
+  include_tasks: create_users/main.yml
+  loop: "{{ users_in_docker }}"
+  loop_control:
+    loop_var: user_in_docker
+  when:
+    - users_in_docker is defined
+# return: token
+
+# Create endpoint
+- name: Create endpoints
+  include_tasks: endpoints.yml
+
+# Update settings
+- name: Update settings
+  include_tasks: settings.yml

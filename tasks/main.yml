@@ -1,0 +1,20 @@
+- name: Install portainer
+  include_tasks: install.yml
+  when: 
+    - install_container is defined
+    - install_container
+  tags: [install]
+
+- name: "Sleep for {{ configuration.wait_for_start_container }} seconds and continue with play"
+  wait_for:
+    timeout: "{{ configuration.wait_for_start_container }}"
+  delegate_to: localhost
+
+- name: Configure portainer
+  include_tasks: configuration.yml
+  when: 
+    - configuration.configratuon_as_a_code is defined
+    - configuration.configratuon_as_a_code
+    - configuration_container is defined
+    - configuration_container
+  tags: [configuration]
